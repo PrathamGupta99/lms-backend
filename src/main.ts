@@ -11,4 +11,4 @@ async function bootstrap() {
   console.log(`LMS backend listening on http://localhost:${port}`);
 }
 
-bootstrap();
+void bootstrap();
