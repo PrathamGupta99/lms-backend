@@ -84,6 +84,16 @@ export class QuestionsService {
     }
   }
 
+  async getRandomByDifficulty(difficulty: number): Promise<QuestionDocument> {
+    const [question] = (await this.questionModel
+      .aggregate([{ $match: { difficulty } }, { $sample: { size: 1 } }])
+      .exec()) as QuestionDocument[];
+    if (!question) {
+      throw new NotFoundException('No question found for this difficulty');
+    }
+    return question;
+  }
+
   private assertCorrectAnswerIndex(index: number, options: string[]): void {
     if (!Array.isArray(options) || options.length < 2) {
       throw new BadRequestException('Options must include at least two entries');
@@ -91,5 +101,13 @@ export class QuestionsService {
     if (!Number.isInteger(index) || index < 0 || index >= options.length) {
       throw new BadRequestException('correctAnswerIndex must point to one of the options');
     }
+  }
+
+  async getSampleQuestions(limit = 5): Promise<QuestionDocument[]> {
+    const sampleSize = limit > 0 ? Math.min(limit, 20) : 5;
+    const docs = (await this.questionModel
+      .aggregate([{ $sample: { size: sampleSize } }])
+      .exec()) as QuestionDocument[];
+    return docs;
   }
 }
