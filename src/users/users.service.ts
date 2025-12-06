@@ -1,7 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User, UserDocument, UserRole } from './schemas/user.schema';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { hashPassword } from '../auth/utils/password.util';
 
 export type SafeUser = {
   id: string;
@@ -16,24 +19,57 @@ export type SafeUser = {
 export class UsersService {
   constructor(@InjectModel(User.name) private readonly userModel: Model<UserDocument>) {}
 
-  async createUser(params: {
-    email: string;
-    passwordHash: string;
-    name: string;
-    role: UserRole;
-  }): Promise<SafeUser> {
+  async createUser(params: CreateUserDto): Promise<SafeUser> {
     const email = params.email.toLowerCase();
     const existing = await this.userModel.findOne({ email }).lean();
     if (existing) {
       throw new BadRequestException('User with this email already exists');
     }
 
-    const created = await this.userModel.create({ ...params, email });
+    const passwordHash = await hashPassword(params.password);
+    const created = await this.userModel.create({ ...params, email, passwordHash });
     return this.toSafeUser(created);
   }
 
   async findByEmail(email: string): Promise<UserDocument | null> {
     return this.userModel.findOne({ email: email.toLowerCase() }).exec();
+  }
+
+  async findByIdOrThrow(id: string): Promise<UserDocument> {
+    const user = await this.userModel.findById(id).exec();
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
+
+  async findAll(): Promise<SafeUser[]> {
+    const users = await this.userModel.find().sort({ createdAt: -1 }).exec();
+    return users.map((u) => this.toSafeUser(u));
+  }
+
+  async updateUser(id: string, dto: UpdateUserDto): Promise<SafeUser> {
+    const user = await this.findByIdOrThrow(id);
+
+    if (dto.name) {
+      user.name = dto.name;
+    }
+    if (dto.role) {
+      user.role = dto.role;
+    }
+    if (dto.password) {
+      user.passwordHash = await hashPassword(dto.password);
+    }
+
+    await user.save();
+    return this.toSafeUser(user);
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    const result = await this.userModel.findByIdAndDelete(id).exec();
+    if (!result) {
+      throw new NotFoundException('User not found');
+    }
   }
 
   toSafeUser(user: UserDocument): SafeUser {
