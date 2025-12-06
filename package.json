@@ -9,6 +9,7 @@
     "build": "nest build",
     "lint": "eslint \"src/**/*.ts\" --max-warnings=0",
     "format": "prettier --write \"src/**/*.ts\"",
+    "test": "jest",
     "seed:questions": "ts-node src/seed/seed-questions.ts",
     "seed:sample": "ts-node src/seed/seed-sample.ts",
     "seed:all": "npm run seed:questions && npm run seed:sample"
@@ -22,6 +23,7 @@
     "@nestjs/mongoose": "^10.0.1",
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.2.7",
+    "@nestjs/swagger": "^7.1.21",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.3",
@@ -30,7 +32,8 @@
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "swagger-ui-express": "^5.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.2.5",
