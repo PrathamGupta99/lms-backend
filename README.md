@@ -25,3 +25,4 @@ NestJS + MongoDB service for the adaptive testing LMS. This repository is scoped
 ## Docker
 - Build: `docker build -t lms-backend .`
 - Run: `docker run --env-file .env -p 4000:4000 lms-backend`
+- Compose: `docker compose up --build` (uses `docker-compose.yml`)
