@@ -1,3 +1,16 @@
 # LMS Backend
 
 NestJS + MongoDB service for the adaptive testing LMS. This repository is scoped for backend-only work and will be expanded ticket-by-ticket. See root docs for full requirements; this README will be updated as features land.
+
+## Quick start (dev)
+1. Copy `.env.example` to `.env.local` and set `MONGODB_URI`, `JWT_SECRET`.
+2. Install deps: `npm install`
+3. Run dev server: `npm run start:dev`
+
+## Scripts
+- `npm run start:dev` — start Nest in watch mode
+- `npm run build` — compile to `dist`
+- `npm run lint` — lint TS
+
+## First admin user
+- Public registration (`POST /auth/register`) always creates an admin. Use this endpoint to create the initial admin after connecting to MongoDB.
