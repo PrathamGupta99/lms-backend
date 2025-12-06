@@ -6,23 +6,26 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common';
-import { HttpAdapterHost } from '@nestjs/core';
+import { AbstractHttpAdapter, HttpAdapterHost } from '@nestjs/core';
+import { Request, Response } from 'express';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
-    const { httpAdapter } = this.httpAdapterHost;
+    // Adapter typing defaults to `any` generics in Nest; suppress unsafe assignment warning.
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const httpAdapter: AbstractHttpAdapter = this.httpAdapterHost.httpAdapter;
     const ctx = host.switchToHttp();
-    const request = ctx.getRequest();
+    const request = ctx.getRequest<Request>();
+    const response = ctx.getResponse<Response>();
 
     const status =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
+      exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const responsePayload = this.buildResponsePayload(exception, status, httpAdapter.getRequestUrl(request));
+    const path = String(httpAdapter.getRequestUrl(request));
+    const responsePayload = this.buildResponsePayload(exception, status, path);
 
     Logger.error(
       `HTTP ${status} - ${JSON.stringify(responsePayload)}`,
@@ -30,7 +33,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       'AllExceptionsFilter',
     );
 
-    httpAdapter.reply(ctx.getResponse(), responsePayload, status);
+    httpAdapter.reply(response, responsePayload, status);
   }
 
   private buildResponsePayload(

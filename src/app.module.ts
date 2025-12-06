@@ -5,6 +5,9 @@ import { Connection } from 'mongoose';
 import configuration from './config/configuration';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
+import { TestsModule } from './tests/tests.module';
 
 @Module({
   imports: [
@@ -28,6 +31,9 @@ import { AppService } from './app.service';
         },
       }),
     }),
+    UsersModule,
+    AuthModule,
+    TestsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
