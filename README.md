@@ -11,6 +11,9 @@ NestJS + MongoDB service for the adaptive testing LMS. This repository is scoped
 - `npm run start:dev` — start Nest in watch mode
 - `npm run build` — compile to `dist`
 - `npm run lint` — lint TS
+- `npm run seed:questions` — seed 500 random questions (requires MongoDB)
+- `npm run seed:sample` — seed default admin + sample test (requires MongoDB)
+- `npm run seed:all` — run all seeders
 
 ## First admin user
 - Public registration (`POST /auth/register`) always creates an admin. Use this endpoint to create the initial admin after connecting to MongoDB.
