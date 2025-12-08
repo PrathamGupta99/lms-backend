@@ -177,6 +177,7 @@ export class TestsService {
         isCorrect,
         difficultyAtTime: session.currentDifficulty,
         weight: question.weight,
+        questionText: question.questionText,
       },
     ];
 

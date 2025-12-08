@@ -3,7 +3,7 @@ import mongoose, { Connection } from 'mongoose';
 import { faker } from '@faker-js/faker';
 import { Question, QuestionSchema } from '../questions/schemas/question.schema';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/lms';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://lms-user:lms-dev@lms.nrevnud.mongodb.net/lms?retryWrites=true&w=majority';
 
 async function run() {
   let connection: Connection | null = null;
@@ -14,9 +14,10 @@ async function run() {
 
     const docs = Array.from({ length: 500 }).map(() => {
       const difficulty = faker.number.int({ min: 1, max: 10 });
-      const weight = faker.number.int({ min: 1, max: 5 });
+      // const weight = faker.number.int({ min: 1, max: 5 });
+      const weight = difficulty;
       const options = Array.from({ length: 4 }).map(() => faker.lorem.words({ min: 2, max: 5 }));
-      const correctAnswerIndex = faker.number.int({ min: 0, max: options.length - 1 });
+      const correctAnswerIndex = faker.number.int({ min: 0, max: 0 });
       return {
         questionText: faker.lorem.sentence(),
         options,

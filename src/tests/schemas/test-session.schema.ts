@@ -7,6 +7,7 @@ export type QuestionAsked = {
   isCorrect: boolean;
   difficultyAtTime: number;
   weight: number;
+  questionText: string;
 };
 
 @Schema({ timestamps: true })
@@ -31,6 +32,7 @@ export class TestSession {
         isCorrect: { type: Boolean, required: true },
         difficultyAtTime: { type: Number, required: true },
         weight: { type: Number, required: true },
+        questionText: { type: String, required: true },
       },
     ],
     default: [],

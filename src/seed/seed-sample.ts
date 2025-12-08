@@ -4,7 +4,7 @@ import { User, UserSchema, UserRole } from '../users/schemas/user.schema';
 import { Test, TestSchema } from '../tests/schemas/test.schema';
 import { hashPassword } from '../auth/utils/password.util';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/lms';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://lms-user:lms-dev@lms.nrevnud.mongodb.net/lms?retryWrites=true&w=majority';
 
 async function run() {
   let connection: Connection | null = null;
@@ -29,15 +29,15 @@ async function run() {
       console.log('Default admin already exists');
     }
 
-    const existingTest = await TestModel.findOne({ uniqueURL: 'sample-test' }).exec();
+    const existingTest = await TestModel.findOne({ uniqueURL: 'sample_test_1' }).exec();
     if (!existingTest) {
       await TestModel.create({
         name: 'Sample Adaptive Test',
         description: 'Demo test seeded for preview',
-        uniqueURL: 'sample-test',
+        uniqueURL: 'sample_test_1',
         createdBy: admin._id,
       });
-      console.log('Created sample test with uniqueURL "sample-test"');
+      console.log('Created sample test with uniqueURL "sample-test_1"');
     } else {
       console.log('Sample test already exists');
     }

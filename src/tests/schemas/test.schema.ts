@@ -9,7 +9,7 @@ export class Test {
   @Prop({ trim: true })
   description?: string;
 
-  @Prop({ required: true, unique: true, trim: true })
+  @Prop({ required: true })
   uniqueURL!: string;
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })

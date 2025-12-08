@@ -2,7 +2,6 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User, UserDocument, UserRole } from './schemas/user.schema';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { hashPassword } from '../auth/utils/password.util';
 
@@ -19,14 +18,25 @@ export type SafeUser = {
 export class UsersService {
   constructor(@InjectModel(User.name) private readonly userModel: Model<UserDocument>) {}
 
-  async createUser(params: CreateUserDto): Promise<SafeUser> {
+  async createUser(params: {
+    email: string;
+    name: string;
+    role: UserRole;
+    password?: string;
+    passwordHash?: string;
+  }): Promise<SafeUser> {
     const email = params.email.toLowerCase();
     const existing = await this.userModel.findOne({ email }).lean();
     if (existing) {
       throw new BadRequestException('User with this email already exists');
     }
 
-    const passwordHash = await hashPassword(params.password);
+    const passwordHash =
+      params.passwordHash ?? (params.password ? await hashPassword(params.password) : undefined);
+    if (!passwordHash) {
+      throw new BadRequestException('Password is required');
+    }
+
     const created = await this.userModel.create({ ...params, email, passwordHash });
     return this.toSafeUser(created);
   }

@@ -18,6 +18,7 @@ NestJS + MongoDB service for the adaptive testing LMS. This repository is scoped
 
 ## First admin user
 - Public registration (`POST /auth/register`) always creates an admin. Use this endpoint to create the initial admin after connecting to MongoDB.
+- Admins cannot take tests; they can only manage and preview. Normal users are created by admins and can take adaptive tests via unique URLs.
 
 ## API docs
 - Swagger available at `/api-docs` when the server is running.
